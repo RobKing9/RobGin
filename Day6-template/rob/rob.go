@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"html/template"
@@ -26,11 +26,11 @@ type (
 		groups []*RouterGroup // store all groups
 
 		htmlTemplates *template.Template
-		funcMap template.FuncMap
+		funcMap       template.FuncMap
 	}
 )
 
-// New is the constructor of gee.Engine
+// New is the constructor of rob.Engine
 func New() *Engine {
 	engine := &Engine{router: newRouter()}
 	engine.RouterGroup = &RouterGroup{engine: engine}
@@ -38,7 +38,7 @@ func New() *Engine {
 	return engine
 }
 
-func(group *RouterGroup) Use(middlewares ...HandlerFunc) {
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
 }
 

@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"encoding/json"
@@ -18,6 +18,10 @@ type Context struct {
 	Params map[string]string
 	// response info
 	StatusCode int
+	//middleware
+	handles []HandlerFunc
+	//记录当前执行到第几个中间件
+	index int
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -26,7 +30,21 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+		index:  -1,
 	}
+}
+
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handles)
+	for ; c.index < s; c.index++ {
+		c.handles[c.index](c)
+	}
+}
+
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handles)
+	c.JSON(code, H{"message": err})
 }
 
 func (c *Context) Param(key string) string {

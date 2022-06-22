@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Day6-template/gee"
+	"Day6-template/rob"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 
 type student struct {
 	Name string
-	Age int8
+	Age  int8
 }
 
 func FormatAsDate(t time.Time) string {
@@ -18,11 +18,11 @@ func FormatAsDate(t time.Time) string {
 	return fmt.Sprintf("%d-%02d-%02d", year, month, day)
 }
 
-func main () {
-	r := gee.New()
-	r.Use(gee.Logger())
+func main() {
+	r := rob.New()
+	r.Use(rob.Logger())
 	r.SetFuncMap(template.FuncMap{
-		"FormatAsDate":FormatAsDate,
+		"FormatAsDate": FormatAsDate,
 	})
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/assets", "./static")
@@ -30,33 +30,17 @@ func main () {
 	stu1 := &student{Name: "zxw", Age: 20}
 	stu2 := &student{Name: "RobKing", Age: 20}
 
-	r.GET("/students", func(c *gee.Context) {
-		c.HTML(http.StatusOK, "arr.tmpl", gee.H{
-			"title" : "rob",
-			"stuArr" : [2]*student{stu1, stu2},
+	r.GET("/students", func(c *rob.Context) {
+		c.HTML(http.StatusOK, "arr.tmpl", rob.H{
+			"title":  "rob",
+			"stuArr": [2]*student{stu1, stu2},
 		})
 	})
-	r.GET("/date", func(c *gee.Context) {
-		c.HTML(http.StatusOK, "custom_func.tmpl", gee.H{
-			"title":"rob",
-			"date": time.Date(2019, 8, 17, 0, 0, 0, 0, time.UTC),
+	r.GET("/date", func(c *rob.Context) {
+		c.HTML(http.StatusOK, "custom_func.tmpl", rob.H{
+			"title": "rob",
+			"date":  time.Date(2019, 8, 17, 0, 0, 0, 0, time.UTC),
 		})
 	})
 	r.Run(":9999")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

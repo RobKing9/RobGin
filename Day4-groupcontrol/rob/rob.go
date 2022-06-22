@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"log"
@@ -11,10 +11,13 @@ type HandlerFunc func(*Context)
 // Engine implement the interface of ServeHTTP
 type (
 	RouterGroup struct {
-		prefix      string
+		//路由组名
+		prefix string
+		//中间件
 		middlewares []HandlerFunc // support middleware
-		parent      *RouterGroup  // support nesting
-		engine      *Engine       // all groups share a Engine instance
+		//路由嵌套
+		parent *RouterGroup // support nesting
+		engine *Engine      // all groups share a Engine instance
 	}
 
 	Engine struct {
@@ -24,7 +27,7 @@ type (
 	}
 )
 
-// New is the constructor of gee.Engine
+// New is the constructor of rob.Engine
 func New() *Engine {
 	engine := &Engine{router: newRouter()}
 	engine.RouterGroup = &RouterGroup{engine: engine}
@@ -33,7 +36,7 @@ func New() *Engine {
 }
 
 // Group is defined to create a new RouterGroup
-// remember all groups share the same Engine instance
+// 所有的路由组使用一个engine实例
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{

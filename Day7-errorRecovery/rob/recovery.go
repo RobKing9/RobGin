@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// print stack trace for debug
+// 错误恢复
 func trace(message string) string {
 	var pcs [32]uintptr
 	n := runtime.Callers(3, pcs[:]) // skip first 3 caller

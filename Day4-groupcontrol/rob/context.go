@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"encoding/json"
@@ -15,14 +15,10 @@ type Context struct {
 	// request info
 	Path   string
 	Method string
+
 	Params map[string]string
 	// response info
 	StatusCode int
-	//middleware
-	handles []HandlerFunc
-	index int
-
-	engine *Engine
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -31,7 +27,6 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
-		index: -1,
 	}
 }
 
@@ -77,44 +72,8 @@ func (c *Context) Data(code int, data []byte) {
 	c.Writer.Write(data)
 }
 
-func (c *Context) Fail(code int, err string) {
-	c.index = len(c.handles)
-	c.JSON(code, H{"message":err})
-}
-
-func(c *Context) Next() {
-	c.index++
-	s := len(c.handles)
-	for ; c.index<s; c.index++ {
-		c.handles[c.index](c)
-	}
-}
-
-func (c *Context) HTML(code int, name string, data interface{}) {
-	c.SetHeader("content-Type", "text/html")
+func (c *Context) HTML(code int, html string) {
+	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
-	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
-		c.Fail(500, err.Error())
-	}
+	c.Writer.Write([]byte(html))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

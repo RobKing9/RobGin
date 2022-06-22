@@ -1,10 +1,12 @@
-package gee
+package rob
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
+
+type H map[string]interface{}
 
 type Context struct {
 	// origin objects
@@ -16,34 +18,21 @@ type Context struct {
 	Params map[string]string
 	// response info
 	StatusCode int
-	// middleware
-	handlers []HandlerFunc
-	index    int
-	// engine pointer
+	//middleware
+	handles []HandlerFunc
+	index   int
+
 	engine *Engine
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	return &Context{
+		Writer: w,
+		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
-		Req:    req,
-		Writer: w,
 		index:  -1,
 	}
-}
-
-func (c *Context) Next() {
-	c.index++
-	s := len(c.handlers)
-	for ; c.index < s; c.index++ {
-		c.handlers[c.index](c)
-	}
-}
-
-func (c *Context) Fail(code int, err string) {
-	c.index = len(c.handlers)
-	c.JSON(code, H{"message": err})
 }
 
 func (c *Context) Param(key string) string {
@@ -88,10 +77,21 @@ func (c *Context) Data(code int, data []byte) {
 	c.Writer.Write(data)
 }
 
-// HTML template render
-// refer https://golang.org/pkg/html/template/
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handles)
+	c.JSON(code, H{"message": err})
+}
+
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handles)
+	for ; c.index < s; c.index++ {
+		c.handles[c.index](c)
+	}
+}
+
 func (c *Context) HTML(code int, name string, data interface{}) {
-	c.SetHeader("Content-Type", "text/html")
+	c.SetHeader("content-Type", "text/html")
 	c.Status(code)
 	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
 		c.Fail(500, err.Error())
