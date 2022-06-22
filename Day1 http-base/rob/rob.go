@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"fmt"
@@ -19,6 +19,9 @@ type Engine struct {
 func New() *Engine {
 	return &Engine{router: make(map[string]HandlerFunc)}
 }
+
+//一条路由包括 方法名|路径|请求体|响应体
+//路由表的key就是 方法名+路径  value是 函数（请求体和响应体）
 
 //启动器 添加路由的功能
 func (engine *Engine) addRouter(method string, pattern string, handle HandlerFunc) {

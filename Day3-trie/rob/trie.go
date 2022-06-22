@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"fmt"
@@ -6,9 +6,9 @@ import (
 )
 
 type node struct {
-	pattern  string  // 是否一个完整的url，不是则为空字符串
-	part     string  // 是否一个完整的url，不是则为空字符串
-	children []*node // 该节点下的子节点
+	pattern  string  // 待匹配路由，例如 /p/:lang
+	part     string  // 路由中的一部分，例如 :lang
+	children []*node // 子节点，例如 [doc, tutorial, intro]
 	isWild   bool    // 是否模糊匹配，比如:filename或*filename这样的node就为true
 }
 
@@ -49,7 +49,7 @@ func (n *node) insert(pattern string, parts []string, height int) {
 
 // 这个函数跟matchChild有点像，但它是返回所有匹配的子节点，原因是它的场景是用以查找
 // 它必须返回所有可能的子节点来进行遍历查找
-func (n *node) matchChidren(part string) []*node {
+func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
 	for _, child := range n.children {
 		if child.part == part || child.isWild {
@@ -70,7 +70,7 @@ func (n *node) search(parts []string, height int) *node {
 
 	part := parts[height]
 	// 获取所有可能的子路径
-	children := n.matchChidren(part)
+	children := n.matchChildren(part)
 
 	for _, child := range children {
 		// 对于每条路径接着用下一part去查找

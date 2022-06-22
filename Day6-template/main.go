@@ -32,13 +32,13 @@ func main () {
 
 	r.GET("/students", func(c *gee.Context) {
 		c.HTML(http.StatusOK, "arr.tmpl", gee.H{
-			"title" : "gee",
+			"title" : "rob",
 			"stuArr" : [2]*student{stu1, stu2},
 		})
 	})
 	r.GET("/date", func(c *gee.Context) {
 		c.HTML(http.StatusOK, "custom_func.tmpl", gee.H{
-			"title":"gee",
+			"title":"rob",
 			"date": time.Date(2019, 8, 17, 0, 0, 0, 0, time.UTC),
 		})
 	})

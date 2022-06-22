@@ -1,7 +1,6 @@
-package gee
+package rob
 
 import (
-	"log"
 	"net/http"
 )
 
@@ -17,7 +16,7 @@ func newRouter() *router {
 }
 
 func (r *router) addRouter(method string, pattern string, handler HandlerFunc) {
-	log.Printf("Router %4s-%s", method, pattern)
+	//log.Printf("Router %4s-%s", method, pattern)
 	key := method + "-" + pattern
 	r.handlers[key] = handler
 }

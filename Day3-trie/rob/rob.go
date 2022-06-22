@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"net/http"
@@ -7,7 +7,6 @@ import (
 type HandlerFunc func(c *Context)
 
 type Engine struct {
-	//将路由封装
 	router *router
 }
 

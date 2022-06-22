@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"net/http"
@@ -6,13 +6,15 @@ import (
 )
 
 type router struct {
+	//节点表 方法+结点（路径|模糊匹配）
 	roots map[string]*node
-	handlers map[string] HandlerFunc
+	//路由表
+	handlers map[string]HandlerFunc
 }
 
 func newRouter() *router {
 	return &router{
-		roots: make(map[string]*node),
+		roots:    make(map[string]*node),
 		handlers: make(map[string]HandlerFunc),
 	}
 }
@@ -33,7 +35,7 @@ func parsePattern(pattern string) []string {
 	return parts
 }
 
-func(r *router) addRouter(method string, pattern string, handlerFunc HandlerFunc) {
+func (r *router) addRouter(method string, pattern string, handlerFunc HandlerFunc) {
 	parts := parsePattern(pattern)
 
 	key := method + "-" + pattern
@@ -41,11 +43,12 @@ func(r *router) addRouter(method string, pattern string, handlerFunc HandlerFunc
 	if !ok {
 		r.roots[method] = &node{}
 	}
+	//添加路由 插入节点
 	r.roots[method].insert(pattern, parts, 0)
 	r.handlers[key] = handlerFunc
 }
 
-func(r *router) getRouter(method string, path string) (*node, map[string]string) {
+func (r *router) getRouter(method string, path string) (*node, map[string]string) {
 	searchParts := parsePattern(path)
 
 	params := make(map[string]string)
@@ -53,7 +56,7 @@ func(r *router) getRouter(method string, path string) (*node, map[string]string)
 	if !ok {
 		return nil, nil
 	}
-
+	//获取路由 查找节点
 	n := root.search(searchParts, 0)
 
 	if n != nil {
@@ -71,7 +74,6 @@ func(r *router) getRouter(method string, path string) (*node, map[string]string)
 	return nil, nil
 }
 
-
 func (r *router) handle(c *Context) {
 	n, params := r.getRouter(c.Method, c.Path)
 	if n != nil {
@@ -82,24 +84,3 @@ func (r *router) handle(c *Context) {
 		c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

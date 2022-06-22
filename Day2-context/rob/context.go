@@ -1,4 +1,4 @@
-package gee
+package rob
 
 import (
 	"encoding/json"
@@ -44,7 +44,7 @@ func (c *Context) Status(code int) {
 	c.Writer.WriteHeader(code)
 }
 
-//context 设置响应头部的功能
+//context 设置响应头部的功能  key是头部的字段 value是头部字段值
 
 func (c *Context) SetHeader(key string, value string) {
 	c.Writer.Header().Set(key, value)
